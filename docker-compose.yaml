@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+    external-service:
+        build:
+            context: .
+            dockerfile: docker/Dockerfile
+        ports:
+        - "3000:3000"
+        env_file:
+        - .env/common.env
+        volumes:
+        - /src:/usr/src/app/src
