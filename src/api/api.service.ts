@@ -15,7 +15,7 @@ export class ApiService {
   public async fetchData(url: string): Promise<any> {
     try {
       const response = await axios.get(url, { headers: this.headers });
-      return response.data[0];
+      return response.data;
     } catch (error) {
       throw new Error(`Failed to fetch data: ${error.message}`);
     }

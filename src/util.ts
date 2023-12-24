@@ -14,3 +14,11 @@ export enum BuildStatus {
     CANCELLED = 'CANCELLED',
     FAILED = 'FAILED'
 }
+
+export const VisualTestJobName = "UI TESTS";
+
+export enum Badges {
+    ACCEPTED = "https://img.shields.io/badge/Status-Accepted-brightgreen",
+    DENIED = "https://img.shields.io/badge/Status-Denied-red",
+    PENDING = "https://img.shields.io/badge/Status-Pending-yellow"
+}

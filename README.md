@@ -17,7 +17,7 @@ This repository provides an integration between Chromatic's custom webhooks and 
 
     Update the `common.env` files with the necessary configuration details.
     - PROJECT_ACCESS_TOKEN=<Gitlab project access token>
-    - GITLAB_URL=<Self hosted Gitlab url>
+    - GITLAB_URL=<Self hosted Gitlab url> EX: https://gitlab.com/api/v4
     - PROJECT_ID=<Your angular project ID>
 
 3. **Run Docker Compose:**

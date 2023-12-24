@@ -10,7 +10,8 @@ export class AppController {
     /**
      * Validate the payload
      */
-    if (!payload) {
+    
+    if (Object.keys(payload).length === 0) {
       return 'Invalid payload';
     }
 
@@ -28,7 +29,7 @@ export class AppController {
         this.chromaticService.reviewDecisions(payload);
         break;
       default:
-        console.log(`${payload} This webhook event is not handled`);
+        console.log(`This webhook event is not handled`);
     }
     return 'Webhook received successfully';
   }
