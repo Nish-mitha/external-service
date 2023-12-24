@@ -10,15 +10,15 @@ This repository provides an integration between Chromatic's custom webhooks and 
 
     ```bash
     git clone https://github.com/Nish-mitha/external-service.git
-    cd your-repo
+    cd external-service
     ```
 
 2. **Update Configuration:**
 
     Update the `common.env` files with the necessary configuration details.
-    PROJECT_ACCESS_TOKEN=<Gitlab project access token>
-    GITLAB_URL=<Self hosted Gitlab url>
-    PROJECT_ID=<Your angular project ID>
+    - PROJECT_ACCESS_TOKEN=<Gitlab project access token>
+    - GITLAB_URL=<Self hosted Gitlab url>
+    - PROJECT_ID=<Your angular project ID>
 
 3. **Run Docker Compose:**
 

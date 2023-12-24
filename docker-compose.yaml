@@ -10,4 +10,5 @@ services:
         env_file:
         - .env/common.env
         volumes:
-        - /src:/usr/src/app/src
+        - ./src:/app/src
+        - ./node_modules:/app/node_modules
