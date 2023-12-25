@@ -26,7 +26,7 @@ export class AppController {
         this.chromaticService.reviewUpdates(payload['review']);
         break;
       case 'review-decision':
-        this.chromaticService.reviewDecisions(payload);
+        this.chromaticService.reviewDecisions(payload['reviewDecision']);
         break;
       default:
         console.log(`This webhook event is not handled`);

@@ -24,12 +24,12 @@ export class GitlabApiService {
      * @param mergeRequestId 
      */
     public async updateMergeRequestDetails(payload: any, mergeRequestId: number): Promise<void> {
-        const dataToUpdate= {
+        const queryParams= {
             description: `### :mag: ${payload.changeCount} changes found in the Visual Tests.
 ![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl} <br><br> **Result:** ${payload.result}`
         };
 
-        await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/merge_requests/${mergeRequestId}`, dataToUpdate);
+        await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/merge_requests/${mergeRequestId}`, queryParams);
 
     }
 
@@ -69,7 +69,7 @@ export class GitlabApiService {
      * @param payload 
      */
     public async createIssue(payload: any): Promise<void> {
-        const dataToUpdate= {
+        const queryParams= {
             title: `${payload.number} - ${payload.title}`,
             labels: "Visual Test Review",
             issue_type: "task",
@@ -77,6 +77,43 @@ export class GitlabApiService {
 <br>**Status:** ${payload.status} <br><br> **Source Branch:** ${payload.headRefName} **Target Branch:** ${payload.baseRefName} <br><br> **URL:** ${payload.webUrl}`
             
         };
-        await this.apiService.postData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues`, dataToUpdate);
+        await this.apiService.postData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues`, queryParams);
+    }
+
+    /**
+     * Function to get Issue Id based on the title
+     * @param state 
+     * @param searchParam 
+     * @param searchIn 
+     * @returns issue Id
+     */
+    public async getIssue(state: string, searchParam: string, searchIn :string): Promise<number> {
+        const queryParams = {
+            state: state,
+            search: searchParam,
+            in: searchIn
+        };
+        const response = await this.apiService.fetchData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues`, queryParams);
+
+        if(Object.keys(response).length != 1) {
+            throw new Error(`More than 2 tickets with same title`);
+        }
+
+        return response[0]['iid'];
+    }
+
+    /**
+     * Function to update the gitlab issue
+     * @param payload 
+     * @param issueId 
+     */
+    public async updateIssue(payload: any, issueId: number): Promise<void> {
+        const issueStatus = payload.review.state == "OPEN" ? "reopen" : "close";
+        const queryParams = {
+            state_event: issueStatus,
+            description: `### ${payload.title}
+<br>**Status:** ${payload.review.status} <br><br> **Reviewer Decision: ** ${payload.status} <br><br> **Source Branch:** ${payload.review.headRefName} **Target Branch:** ${payload.review.baseRefName} <br><br> **URL:** ${payload.review.webUrl}`
+        };
+        await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues/${issueId}`, queryParams);
     }
 }

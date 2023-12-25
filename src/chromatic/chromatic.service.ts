@@ -26,12 +26,15 @@ export class ChromaticService {
      * @param payload 
      */
     public async reviewUpdates(payload: any): Promise<void> {
-        this.gitlabApiService.createIssue(payload);
+        await this.gitlabApiService.createIssue(payload);
     }
     
+    /**
+     * Function to update issue and close/reopen the issue.
+     * @param payload 
+     */
     public async reviewDecisions(payload: any): Promise<void> {
-        /**
-         * Need to add
-         */
+        const issueId = await this.gitlabApiService.getIssue("opened", `${payload.review.number} - ${payload.review.title}`, "title");
+        await this.gitlabApiService.updateIssue(payload, issueId);
     }
 }
