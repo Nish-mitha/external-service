@@ -22,7 +22,9 @@ export class ApiService {
       const response = await axios.get(url, { headers: this.headers, params: data });
       return response.data;
     } catch (error) {
-      throw new Error(`Failed to fetch data: ${error.message}`);
+      return {
+        message: `Failed to fetch data: ${error.message}`
+      };
     }
   }
     
@@ -37,7 +39,9 @@ export class ApiService {
       const response = await axios.put(url, data, { headers: this.headers });
       return response.data;
     } catch (error) {
-      throw new Error(`Failed to put data: ${error.message}`);
+      return {
+        message: `Failed to PUT data: ${error.message}`
+      };
     }
   }
 
@@ -52,7 +56,9 @@ export class ApiService {
       const response = await axios.post(url, data, { headers: this.headers });
       return response.data;
     } catch (error) {
-      throw new Error(`Failed to post data: ${error.message}`);
+      return {
+        message: `Failed to POST data: ${error.message}`
+      };
     }
   }
 }

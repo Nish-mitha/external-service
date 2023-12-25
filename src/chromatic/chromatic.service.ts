@@ -10,7 +10,7 @@ export class ChromaticService {
      * This function updates the Merge request description and if the build is accepted then it will retry the failed external service job
      * @param payload 
      */
-    public async buildUpdates(payload: any): Promise<void> {
+    public async buildUpdates(payload: any): Promise<any> {
         const mergeRequestId = await this.gitlabApiService.getMergeRequestDetails(payload.commit);
         await this.gitlabApiService.updateMergeRequestDetails(payload, mergeRequestId);
 
@@ -19,22 +19,31 @@ export class ChromaticService {
             const jobId = await this.gitlabApiService.getJobDetails(pipelineId);
             await this.gitlabApiService.retryFailedJob(jobId);
         }
+        return { message: 'Successfuly updated Chromatic Build Details'};
     }
     
     /**
      * This function creates an gitlab Issue when a manual PR is created in Chromatic
      * @param payload 
      */
-    public async reviewUpdates(payload: any): Promise<void> {
+    public async reviewUpdates(payload: any): Promise<any> {
+        const issueId = await this.gitlabApiService.getIssue(`${payload.number} - ${payload.title}`, "title");
+
+        if(issueId) {
+            return `Already an Issue is created with the title ${payload.number} - ${payload.title}`;
+        }
+
         await this.gitlabApiService.createIssue(payload);
+        return { message: 'Successfuly created an Issue in gitlab'};
     }
     
     /**
      * Function to update issue and close/reopen the issue.
      * @param payload 
      */
-    public async reviewDecisions(payload: any): Promise<void> {
+    public async reviewDecisions(payload: any): Promise<any> {
         const issueId = await this.gitlabApiService.getIssue(`${payload.review.number} - ${payload.review.title}`, "title");
         await this.gitlabApiService.updateIssue(payload, issueId);
+        return { message: 'Successfuly updated an Issue in gitlab'};
     }
 }

@@ -87,16 +87,15 @@ export class GitlabApiService {
      * @param searchIn 
      * @returns issue Id
      */
-    public async getIssue(searchParam: string, searchIn :string): Promise<number> {
+    public async getIssue(searchParam: string, searchIn :string): Promise<any> {
         const queryParams = {
             search: searchParam,
             in: searchIn
         };
         const response = await this.apiService.fetchData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues`, queryParams);
 
-        if(Object.keys(response).length > 1 || Object.keys(response).length == 0) {
-            throw new Error(`More than 2 issue with same title / Issue not found`);
-        }
+        if(Object.keys(response).length > 1)
+            return { message: `More than 2 issue with same title` };
 
         return response[0]['iid'];
     }

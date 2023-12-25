@@ -23,14 +23,13 @@ export class AppController {
         await this.chromaticService.buildUpdates(payload['build']);
         break;
       case 'review':
-        this.chromaticService.reviewUpdates(payload['review']);
+        await this.chromaticService.reviewUpdates(payload['review']);
         break;
       case 'review-decision':
-        this.chromaticService.reviewDecisions(payload['reviewDecision']);
+        await this.chromaticService.reviewDecisions(payload['reviewDecision']);
         break;
       default:
         console.log(`This webhook event is not handled`);
     }
-    return 'Webhook received successfully';
   }
 }
