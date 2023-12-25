@@ -7,10 +7,10 @@ export class AppController {
 
   @Post('chromatic')
   async handleWebhook(@Body() payload: any): Promise<string> {
+
     /**
      * Validate the payload
      */
-    
     if (Object.keys(payload).length === 0) {
       return 'Invalid payload';
     }
@@ -23,7 +23,7 @@ export class AppController {
         await this.chromaticService.buildUpdates(payload['build']);
         break;
       case 'review':
-        this.chromaticService.reviewUpdates(payload);
+        this.chromaticService.reviewUpdates(payload['review']);
         break;
       case 'review-decision':
         this.chromaticService.reviewDecisions(payload);

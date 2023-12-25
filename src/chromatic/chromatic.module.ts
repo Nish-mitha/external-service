@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ChromaticService } from './chromatic.service';
-import { ApiModule } from 'src/api/api.module';
+import { GitlabApiModule } from 'src/gitlab-api/gitlab-api.module';
 
 @Module({
-  imports: [ ApiModule ],
+  imports: [ GitlabApiModule ],
   providers: [ ChromaticService ],
   exports: [ ChromaticService ]
 })

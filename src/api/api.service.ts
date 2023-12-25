@@ -12,6 +12,11 @@ export class ApiService {
     }
   }
 
+  /**
+   * Function to GET Data
+   * @param url 
+   * @returns Response
+   */
   public async fetchData(url: string): Promise<any> {
     try {
       const response = await axios.get(url, { headers: this.headers });
@@ -21,6 +26,12 @@ export class ApiService {
     }
   }
     
+  /**
+   * Function to PUT data
+   * @param url 
+   * @param data 
+   * @returns Response
+   */
   public async putData(url: string, data: Obj): Promise<any> {
     try {
       const response = await axios.put(url, data, { headers: this.headers });
@@ -30,6 +41,12 @@ export class ApiService {
     }
   }
 
+  /**
+   * Function to POST Data
+   * @param url 
+   * @param data 
+   * @returns Response
+   */
   public async postData(url: string, data?: Obj): Promise<any> {
     try {
       const response = await axios.post(url, data, { headers: this.headers });

@@ -1,56 +1,37 @@
 import { Injectable } from '@nestjs/common';
-import { ApiService } from 'src/api/api.service';
-import { Badges, BuildStatus, VisualTestJobName } from 'src/util';
+import { GitlabApiService } from 'src/gitlab-api/gitlab-api.service';
+import { BuildStatus } from 'src/util';
 
 @Injectable()
 export class ChromaticService {
-    constructor(private readonly apiService: ApiService) {}
+    constructor(private readonly gitlabApiService: GitlabApiService) {}
 
+    /**
+     * This function updates the Merge request description and if the build is accepted then it will retry the failed external service job
+     * @param payload 
+     */
     public async buildUpdates(payload: any): Promise<void> {
-        const dataToUpdate= {
-            description: `### :mag: ${payload.changeCount} changes found in the Visual Tests.
-![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl} <br><br> **Result:** ${payload.result}`
-            
-        };
-        const mergeRequestId = await this.getMergeRequestDetails(payload.commit);
-        const url = `${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/merge_requests/${mergeRequestId}`;
-        await this.apiService.putData(url, dataToUpdate);
+        const mergeRequestId = await this.gitlabApiService.getMergeRequestDetails(payload.commit);
+        await this.gitlabApiService.updateMergeRequestDetails(payload, mergeRequestId);
 
         if(payload.status == BuildStatus.ACCEPTED) {
-            const pipelineId = await this.getPipelineDetails(mergeRequestId);
-            const jobId = await this.getJobDetails(pipelineId);
-            await this.apiService.postData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/jobs/${jobId}/retry`, {});
+            const pipelineId = await this.gitlabApiService.getPipelineDetails(mergeRequestId);
+            const jobId = await this.gitlabApiService.getJobDetails(pipelineId);
+            await this.gitlabApiService.retryFailedJob(jobId);
         }
     }
     
+    /**
+     * This function creates an gitlab Issue when a manual PR is created in Chromatic
+     * @param payload 
+     */
     public async reviewUpdates(payload: any): Promise<void> {
-        /**
-         * Need to add
-         */
+        this.gitlabApiService.createIssue(payload);
     }
     
     public async reviewDecisions(payload: any): Promise<void> {
         /**
          * Need to add
          */
-    }
-    
-    private async getMergeRequestDetails(commitId: string): Promise<number> {
-        const url = `${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/repository/commits/${commitId}/merge_requests`;
-        const response = await this.apiService.fetchData(url);
-        return response[0]['iid'];
-    }
-
-    private async getPipelineDetails(mergeRequestId: number): Promise<number> {
-        const url = `${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/merge_requests/${mergeRequestId}/pipelines?per_page=1&order_by=id&sort=desc`;
-        const response = await this.apiService.fetchData(url);
-        return response[0]['id'];
-    }
-
-    private async getJobDetails(pipelineId: number): Promise<number> {
-        const url = `${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/pipelines/${pipelineId}/jobs`;
-        const response = await this.apiService.fetchData(url);
-        const VisualTestJobRes = response.find(job => job.name === VisualTestJobName)
-        return VisualTestJobRes['id'];
     }
 }
