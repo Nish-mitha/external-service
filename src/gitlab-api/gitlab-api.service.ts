@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ApiService } from 'src/api/api.service';
-import { Badges, VisualTestJobName } from 'src/util';
+import { Badges, BuildStatus, VisualTestJobName } from 'src/util';
 
 @Injectable()
 export class GitlabApiService {
@@ -24,9 +24,18 @@ export class GitlabApiService {
      * @param mergeRequestId 
      */
     public async updateMergeRequestDetails(payload: any, mergeRequestId: number): Promise<void> {
+        var descriptionTitle = payload?.changeCount ? "${payload.changeCount} changes found in the Visual Tests.": "No changes found in the Visual Tests.";
+        
+        var mergeRequestDesc = `### :mag: ${descriptionTitle}
+        ![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl} <br><br> **Result:** ${payload.result}`;
+
+        if(payload.status === BuildStatus.PREPARED || payload.status === BuildStatus.IN_PROGRESS || payload.status === BuildStatus.PUBLISHED) {
+            mergeRequestDesc = `### ${payload.status}
+        ![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl}`;
+        }
+
         const queryParams= {
-            description: `### :mag: ${payload.changeCount} changes found in the Visual Tests.
-![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl} <br><br> **Result:** ${payload.result}`
+            description: mergeRequestDesc
         };
 
         await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/merge_requests/${mergeRequestId}`, queryParams);
@@ -94,9 +103,13 @@ export class GitlabApiService {
         };
         const response = await this.apiService.fetchData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues`, queryParams);
 
-        if(Object.keys(response).length > 1)
-            return { message: `More than 2 issue with same title` };
+        if(Object.keys(response).length == 0) {
+            return false;
+        }
 
+        if(Object.keys(response).length > 1) {
+            return { message: `More than 2 issue with same title` };
+        }
         return response[0]['iid'];
     }
 

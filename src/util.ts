@@ -20,5 +20,8 @@ export const VisualTestJobName = "UI TESTS";
 export enum Badges {
     ACCEPTED = "https://img.shields.io/badge/Status-Accepted-brightgreen",
     DENIED = "https://img.shields.io/badge/Status-Denied-red",
-    PENDING = "https://img.shields.io/badge/Status-Pending-yellow"
+    PENDING = "https://img.shields.io/badge/Status-Pending-yellow",
+    PREPARED = "https://img.shields.io/badge/Status-Prepared-orange",
+    IN_PROGRESS = "https://img.shields.io/badge/Status-In_Progress-blue",
+    PUBLISHED = "https://img.shields.io/badge/Status-Published-violet"
 }
