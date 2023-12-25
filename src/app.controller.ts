@@ -6,7 +6,7 @@ export class AppController {
   constructor(private readonly chromaticService: ChromaticService) {}
 
   @Post('chromatic')
-  async handleWebhook(@Body() payload: any): Promise<string> {
+  async handleWebhook(@Body() payload: any): Promise<any> {
 
     /**
      * Validate the payload
@@ -20,16 +20,13 @@ export class AppController {
      */
     switch (payload['event']) {
       case 'build':
-        await this.chromaticService.buildUpdates(payload['build']);
-        break;
+        return await this.chromaticService.buildUpdates(payload['build']);
       case 'review':
-        await this.chromaticService.reviewUpdates(payload['review']);
-        break;
+        return await this.chromaticService.reviewUpdates(payload['review']);
       case 'review-decision':
-        await this.chromaticService.reviewDecisions(payload['reviewDecision']);
-        break;
+        return await this.chromaticService.reviewDecisions(payload['reviewDecision']);
       default:
-        console.log(`This webhook event is not handled`);
+        return `This webhook event is not handled`;
     }
   }
 }

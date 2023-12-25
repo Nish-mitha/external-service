@@ -19,7 +19,7 @@ export class ChromaticService {
             const jobId = await this.gitlabApiService.getJobDetails(pipelineId);
             await this.gitlabApiService.retryFailedJob(jobId);
         }
-        return { message: 'Successfuly updated Chromatic Build Details'};
+        return 'Successfuly updated Chromatic Build Details';
     }
     
     /**
@@ -34,7 +34,7 @@ export class ChromaticService {
         }
 
         await this.gitlabApiService.createIssue(payload);
-        return { message: 'Successfuly created an Issue in gitlab'};
+        return 'Successfuly created an Issue in gitlab';
     }
     
     /**
@@ -44,6 +44,6 @@ export class ChromaticService {
     public async reviewDecisions(payload: any): Promise<any> {
         const issueId = await this.gitlabApiService.getIssue(`${payload.review.number} - ${payload.review.title}`, "title");
         await this.gitlabApiService.updateIssue(payload, issueId);
-        return { message: 'Successfuly updated an Issue in gitlab'};
+        return 'Successfuly updated an Issue in gitlab';
     }
 }

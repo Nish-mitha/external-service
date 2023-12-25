@@ -24,14 +24,14 @@ export class GitlabApiService {
      * @param mergeRequestId 
      */
     public async updateMergeRequestDetails(payload: any, mergeRequestId: number): Promise<void> {
-        var descriptionTitle = payload?.changeCount ? "${payload.changeCount} changes found in the Visual Tests.": "No changes found in the Visual Tests.";
+        var descriptionTitle = payload?.changeCount ? `${payload.changeCount} changes found in the Visual Tests.` : "No changes found in the Visual Tests.";
         
         var mergeRequestDesc = `### :mag: ${descriptionTitle}
-        ![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl} <br><br> **Result:** ${payload.result}`;
+![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl} <br><br> **Result:** ${payload.result}`;
 
         if(payload.status === BuildStatus.PREPARED || payload.status === BuildStatus.IN_PROGRESS || payload.status === BuildStatus.PUBLISHED) {
             mergeRequestDesc = `### ${payload.status}
-        ![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl}`;
+![${payload.status}](${Badges[payload.status]}) <br><br> **Storybook URL:** ${payload.storybookUrl} <br><br> **Chromatic Build URL:** ${payload.webUrl}`;
         }
 
         const queryParams= {
@@ -108,7 +108,7 @@ export class GitlabApiService {
         }
 
         if(Object.keys(response).length > 1) {
-            return { message: `More than 2 issue with same title` };
+            return  `More than 2 issue with same title` ;
         }
         return response[0]['iid'];
     }
@@ -119,7 +119,7 @@ export class GitlabApiService {
      * @param issueId 
      */
     public async updateIssue(payload: any, issueId: number): Promise<void> {
-        const issueStatus = payload.review.status == "OPEN" ? "reopen" : "close";
+        const issueStatus = (payload.review.status == "OPEN" && payload.status != "APPROVED" ) ? "reopen" : "close";
         const queryParams = {
             state_event: issueStatus,
             description: `### ${payload.review.title}
