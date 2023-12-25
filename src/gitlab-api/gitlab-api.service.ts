@@ -87,16 +87,15 @@ export class GitlabApiService {
      * @param searchIn 
      * @returns issue Id
      */
-    public async getIssue(state: string, searchParam: string, searchIn :string): Promise<number> {
+    public async getIssue(searchParam: string, searchIn :string): Promise<number> {
         const queryParams = {
-            state: state,
             search: searchParam,
             in: searchIn
         };
         const response = await this.apiService.fetchData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues`, queryParams);
 
-        if(Object.keys(response).length != 1) {
-            throw new Error(`More than 2 tickets with same title`);
+        if(Object.keys(response).length > 1 || Object.keys(response).length == 0) {
+            throw new Error(`More than 2 issue with same title / Issue not found`);
         }
 
         return response[0]['iid'];
@@ -108,11 +107,11 @@ export class GitlabApiService {
      * @param issueId 
      */
     public async updateIssue(payload: any, issueId: number): Promise<void> {
-        const issueStatus = payload.review.state == "OPEN" ? "reopen" : "close";
+        const issueStatus = payload.review.status == "OPEN" ? "reopen" : "close";
         const queryParams = {
             state_event: issueStatus,
-            description: `### ${payload.title}
-<br>**Status:** ${payload.review.status} <br><br> **Reviewer Decision: ** ${payload.status} <br><br> **Source Branch:** ${payload.review.headRefName} **Target Branch:** ${payload.review.baseRefName} <br><br> **URL:** ${payload.review.webUrl}`
+            description: `### ${payload.review.title}
+<br>**Status:** ${payload.review.status} <br><br> **Reviewer Decision:** ${payload.status} <br><br> **Source Branch:** ${payload.review.headRefName} **Target Branch:** ${payload.review.baseRefName} <br><br> **URL:** ${payload.review.webUrl}`
         };
         await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues/${issueId}`, queryParams);
     }

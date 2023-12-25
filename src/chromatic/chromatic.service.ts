@@ -34,7 +34,7 @@ export class ChromaticService {
      * @param payload 
      */
     public async reviewDecisions(payload: any): Promise<void> {
-        const issueId = await this.gitlabApiService.getIssue("opened", `${payload.review.number} - ${payload.review.title}`, "title");
+        const issueId = await this.gitlabApiService.getIssue(`${payload.review.number} - ${payload.review.title}`, "title");
         await this.gitlabApiService.updateIssue(payload, issueId);
     }
 }
