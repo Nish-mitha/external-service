@@ -112,6 +112,7 @@ export class GitlabApiService {
         if(Object.keys(response).length > 1) {
             return  `More than 2 issue with same title` ;
         }
+        console.log(response);
         // return response[0]['iid'];
         return response['iid'];
     }
