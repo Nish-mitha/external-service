@@ -15,7 +15,8 @@ export class GitlabApiService {
     public async getMergeRequestDetails(commitId: string): Promise<number> {
         const url = `${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/repository/commits/${commitId}/merge_requests`;
         const response = await this.apiService.fetchData(url);
-        return response[0]['iid'];
+        // return response[0]['iid'];
+        return response['iid'];
     }
 
     /**
@@ -50,7 +51,8 @@ export class GitlabApiService {
     public async getPipelineDetails(mergeRequestId: number): Promise<number> {
         const url = `${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/merge_requests/${mergeRequestId}/pipelines?per_page=1&order_by=id&sort=desc`;
         const response = await this.apiService.fetchData(url);
-        return response[0]['id'];
+        // return response[0]['id'];
+        return response['iid'];
     }
 
     /**
@@ -110,7 +112,8 @@ export class GitlabApiService {
         if(Object.keys(response).length > 1) {
             return  `More than 2 issue with same title` ;
         }
-        return response[0]['iid'];
+        // return response[0]['iid'];
+        return response['iid'];
     }
 
     /**
