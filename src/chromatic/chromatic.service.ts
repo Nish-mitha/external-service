@@ -14,7 +14,7 @@ export class ChromaticService {
         const mergeRequestId = await this.gitlabApiService.getMergeRequestDetails(payload.commit);
         await this.gitlabApiService.updateMergeRequestDetails(payload, mergeRequestId);
 
-        if(payload.status == BuildStatus.ACCEPTED) {
+        if(payload.status == BuildStatus.ACCEPTED || payload.status == BuildStatus.PASSED) {
             const pipelineId = await this.gitlabApiService.getPipelineDetails(mergeRequestId);
             const jobId = await this.gitlabApiService.getJobDetails(pipelineId);
             const variableData = {
