@@ -17,14 +17,14 @@ export class ChromaticService {
         if(payload.status == BuildStatus.ACCEPTED) {
             const pipelineId = await this.gitlabApiService.getPipelineDetails(mergeRequestId);
             const jobId = await this.gitlabApiService.getJobDetails(pipelineId);
-            const variableData = (payload.status === BuildStatus.ACCEPTED) ? {
+            const variableData = {
                 "job_variables_attributes": [
                   {
                     "key": "WEBHOOK_STATUS",
                     "value": payload.status
                   }
                 ]
-            } : {};
+            };
             await this.gitlabApiService.playManualJob(jobId,variableData);
         }
 
