@@ -14,11 +14,20 @@ export class ChromaticService {
         const mergeRequestId = await this.gitlabApiService.getMergeRequestDetails(payload.commit);
         await this.gitlabApiService.updateMergeRequestDetails(payload, mergeRequestId);
 
-        if(payload.status == BuildStatus.ACCEPTED) {
+        if(payload.status == BuildStatus.PENDING || payload.status == BuildStatus.ACCEPTED) {
             const pipelineId = await this.gitlabApiService.getPipelineDetails(mergeRequestId);
             const jobId = await this.gitlabApiService.getJobDetails(pipelineId);
-            await this.gitlabApiService.retryFailedJob(jobId);
+            const variableData = (payload.status === BuildStatus.ACCEPTED) ? {
+                "job_variables_attributes": [
+                  {
+                    "key": "WEBHOOK_STATUS",
+                    "value": payload.status
+                  }
+                ]
+            } : {};
+            await this.gitlabApiService.playManualJob(jobId,variableData);
         }
+
         return 'Successfuly updated Chromatic Build Details';
     }
     

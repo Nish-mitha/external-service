@@ -23,7 +23,7 @@ export class GitlabApiService {
      * @param payload 
      * @param mergeRequestId 
      */
-    public async updateMergeRequestDetails(payload: any, mergeRequestId: number): Promise<void> {
+    public async updateMergeRequestDetails(payload: any, mergeRequestId: number): Promise<any> {
         var descriptionTitle = payload?.changeCount ? `${payload.changeCount} changes found in the Visual Tests.` : "No changes found in the Visual Tests.";
         
         var mergeRequestDesc = `### :mag: ${descriptionTitle}
@@ -38,7 +38,7 @@ export class GitlabApiService {
             description: mergeRequestDesc
         };
 
-        await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/merge_requests/${mergeRequestId}`, queryParams);
+        return await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/merge_requests/${mergeRequestId}`, queryParams);
 
     }
 
@@ -66,27 +66,27 @@ export class GitlabApiService {
     }
 
     /**
-     * Function to retry failed Jobs
+     * Function to play the manual Jobs
      * @param jobId 
      */
-    public async retryFailedJob(jobId: number): Promise<void> {
-        await this.apiService.postData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/jobs/${jobId}/retry`, {});
+    public async playManualJob(jobId: number, data: any): Promise<any> {
+        return await this.apiService.postData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/jobs/${jobId}/play`, data);
     }
 
     /**
      * Function to create an issue in gitlab
      * @param payload 
      */
-    public async createIssue(payload: any): Promise<void> {
+    public async createIssue(payload: any): Promise<any> {
         const queryParams= {
             title: `${payload.number} - ${payload.title}`,
             labels: "Visual Test Review",
-            issue_type: "task",
+            issue_type: "issue",
             description: `### ${payload.title}
 <br>**Status:** ${payload.status} <br><br> **Source Branch:** ${payload.headRefName} **Target Branch:** ${payload.baseRefName} <br><br> **URL:** ${payload.webUrl}`
             
         };
-        await this.apiService.postData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues`, queryParams);
+        return await this.apiService.postData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues`, queryParams);
     }
 
     /**
@@ -118,13 +118,13 @@ export class GitlabApiService {
      * @param payload 
      * @param issueId 
      */
-    public async updateIssue(payload: any, issueId: number): Promise<void> {
+    public async updateIssue(payload: any, issueId: number): Promise<any> {
         const issueStatus = (payload.review.status == "OPEN" && payload.status != "APPROVED" ) ? "reopen" : "close";
         const queryParams = {
             state_event: issueStatus,
             description: `### ${payload.review.title}
 <br>**Status:** ${payload.review.status} <br><br> **Reviewer Decision:** ${payload.status} <br><br> **Source Branch:** ${payload.review.headRefName} **Target Branch:** ${payload.review.baseRefName} <br><br> **URL:** ${payload.review.webUrl}`
         };
-        await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues/${issueId}`, queryParams);
+        return await this.apiService.putData(`${process.env.GITLAB_URL}/projects/${process.env.PROJECT_ID}/issues/${issueId}`, queryParams);
     }
 }

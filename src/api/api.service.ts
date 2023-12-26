@@ -51,7 +51,7 @@ export class ApiService {
    * @param data 
    * @returns Response
    */
-  public async postData(url: string, data?: Obj): Promise<any> {
+  public async postData(url: string, data?: any): Promise<any> {
     try {
       const response = await axios.post(url, data, { headers: this.headers });
       return response.data;
