@@ -54,8 +54,10 @@ export class ApiService {
   public async postData(url: string, data?: any): Promise<any> {
     try {
       const response = await axios.post(url, data, { headers: this.headers });
+      console.log(response);
       return response.data;
     } catch (error) {
+      console.log(error.message);
       return {
         message: `Failed to POST data: ${error.message}`
       };
